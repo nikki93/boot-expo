@@ -1,3 +1,5 @@
+![boot-expo](demo.gif "boot-expo")
+
 # boot-expo
 
 Minimal project that uses [Boot](http://boot-clj.com) to
