@@ -11,7 +11,28 @@ const loadTargetAsync = (path) => (
     fetch(`${packagerHost}target/main.out/${path}`)
       .then((response) => response.text()),
     lastLoadTargetAsync,
-  ]).then(([text]) => (0, eval)(text))
+  ]).then(([text]) => {
+    (0, eval)(text);
+
+    // Shim `goog.net.jsloader` to use our loader
+    if (path === 'goog/net/jsloader.js') {
+      goog.net.jsloader.safeLoad = (path) => {
+        const deferred = new goog.async.Deferred();
+        (async () => {
+          try {
+            const unwrapped = goog.html.TrustedResourceUrl.unwrap(path)
+                                  .path_;
+            // These paths happen to be relative to `target/`
+            await loadTargetAsync(`../${unwrapped}`);
+            deferred.callback();
+          } catch (e) {
+            deferred.errback();
+          }
+        })();
+        return deferred;
+      }
+    }
+  })
 );
 
 const initCLJSDevAsync = async () => {
