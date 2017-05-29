@@ -45,4 +45,7 @@ project normally with Expo (using XDE or `exp`).
 
 To connect to the REPL, connect to the nREPL server indicated by the output of
 `boot dev`. This can be done using `boot repl -c` in another terminal, or from
-an editor such as Cursive, CIDER on Emacs, etc.
+an editor such as Cursive, CIDER on Emacs, etc. In the resulting Clojure
+REPL,
+[run `(start-repl)` to enter the ClojureScript REPL](https://github.com/adzerk-oss/boot-cljs-repl#repl).
+Then you're ready to go!
