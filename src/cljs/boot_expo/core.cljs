@@ -18,4 +18,4 @@
                          ReactNative.Text
                          #js {:style #js {:color "white"
                                           :fontWeight "bold"}}
-                         ["welcome to the future :)"])))
+                         "welcome to the future :)")))
