@@ -2,6 +2,20 @@ import Expo from 'expo';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+
+// Runtime string -> module map for `(js/require ...)`
+
+const moduleMap = {
+  'expo': require('expo'),
+  'react': require('react'),
+  'react-native': require('react-native'),
+};
+const oldRequire = require;
+global.require = (m) => moduleMap[m] || oldRequire(m);
+
+
+// Remote JavaScript loader for `goog.require(...)` for development
+
 const packagerHost = Expo.Constants.manifest.bundleUrl
                          .match(/^https?:\/\/.*?\//)[0];
 
@@ -35,6 +49,9 @@ const loadTargetAsync = (path) => (
   })
 );
 
+
+// Load and enter CLJS entrypoint for development
+
 const initCLJSDevAsync = async () => {
   // Load and configure Google Closure Library for Expo context
   await loadTargetAsync('goog/base.js');
@@ -49,40 +66,30 @@ const initCLJSDevAsync = async () => {
 }
 
 
+// Displays component set by `(js/setCLJSRootElement ...)`
+
 class App extends React.Component {
   state = {
-    initialized: false,
+    cljsRoot: null,
   }
 
-  async componentDidMount() {
-    await initCLJSDevAsync();
-    this.setState({ initialized: true });
+  componentDidMount() {
+    global.setCLJSRootElement = (cljsRoot) =>
+      this.setState({ cljsRoot });
+    initCLJSDevAsync();
   }
 
   render() {
-    return this.state.initialized ? (
-      <View style={styles.container}>
-        <Text>hello, world</Text>
-      </View>
-    ) : (
+    return this.state.cljsRoot || (
       <View style={{
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <Text>initializing cljs dev setup...</Text>
+        <Text>waiting for cljs root element...</Text>
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 Expo.registerRootComponent(App);
