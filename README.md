@@ -37,19 +37,28 @@ web ClojureScript project.
   
 ## Running in development mode
 
-Make sure you are already ready to run normal JavaScript Expo projects by
-following [Expo's Up and Running guide](https://docs.expo.io/versions/latest/guides/up-and-running.html).
-
+Prerequisites: Make sure you are already ready to run normal JavaScript Expo
+projects by
+following
+[Expo's Up and Running guide](https://docs.expo.io/versions/latest/guides/up-and-running.html).
 Then make sure you
 have [Boot installed](https://github.com/boot-clj/boot#install).
 
-Run `boot dev` at the root of this project to start the ClojureScript
-compilation process and the REPL server. After it's ready, you can load your
-project normally with Expo (using XDE or `exp`).
+At the root of this project run `npm i` as usual.
+
+Then run `boot dev` to start the ClojureScript compilation process and the REPL
+server. Keep this running in the background. After it's ready, you can load your
+project normally with Expo (using XDE or `exp`). Disable "Live reload" from
+the
+[developer menu](https://docs.expo.io/versions/latest/guides/debugging.html#developer-menu) of
+the app: that option uses the React Native packager and restarts the app when
+you edit sources, but `boot-reload` reloads sources directly using WebSockets
+without the need to restart.
 
 To connect to the REPL, connect to the nREPL server indicated by the output of
 `boot dev`. This can be done using `boot repl -c` in another terminal, or from
 an editor such as Cursive, CIDER on Emacs, etc. In the resulting Clojure
 REPL,
 [run `(start-repl)` to enter the ClojureScript REPL](https://github.com/adzerk-oss/boot-cljs-repl#repl).
-Then you're ready to go!
+
+Then you're ready to go! :)
