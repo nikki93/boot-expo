@@ -11,25 +11,7 @@
 
 (require '[adzerk.boot-cljs :refer [cljs]]
          '[adzerk.boot-reload :refer [reload]]
-         '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
-         '[clojure.java.io :as io])
-
-
-(deftask replace-main
-  "Modify main.js to simply `goog.require` the CLJS entrypoint it refers to
-(looks like 'boot.cljs.main516')."
-  []
-  (with-pre-wrap fileset
-    (let [tmp-dir (tmp-dir!)]
-      (spit (io/file tmp-dir "main.js")
-            (str "goog.require('"
-                 (get (->> "main.js"
-                           (tmp-get fileset)
-                           (tmp-file)
-                           slurp
-                           (re-find #"(boot.cljs.\w+)\"")) 1)
-                 "');"))
-      (-> fileset (add-resource tmp-dir) (commit!)))))
+         '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]])
 
 
 (deftask dev
@@ -41,5 +23,4 @@
            :ws-host "localhost")
    (cljs-repl)
    (cljs)
-   (replace-main)
    (target :dir #{"target"})))
