@@ -14,24 +14,26 @@ a read-eval-print loop into the running instance of the app.
 
 I highly recommend the first 3 sections of
 the [Modern ClojureScript tutorial](https://github.com/magomimmo/modern-cljs) to
-learn about using Boot for ClojureScript if you aren't already familiar with it.
+learn about using Boot with these tasks for ClojureScript for the web. The
+`boot.build` file for this Expo project is essentially the same as that for a
+web ClojureScript project.
 
 ## Files
 
 - `main.js` is the JavaScript entrypoint of the Expo application. Sets up remote
   loading of JavaScript files for the Google Closure Library (used by
-  ClojureScript to load compiled JavaScript sources) to call into and
-  initializes a root React component that waits for a root component from
-  ClojureScript.
+  ClojureScript to load compiled JavaScript sources) to call into, maps module
+  names for `(js/require ...)` to work in ClojureScript and initializes a root
+  React component that waits for a root component from ClojureScript. This file
+  contains all the magic, the rest of the project is like a normal Expo app or a
+  normal ClojureScript web app.
 - `src/cljs/boot_expo/core.cljs` contains a minimal ClojureScript React Native
   app that uses React Native directly without any wrappers.
 - `target/` is where all of the ClojureScript build output will go.
   `target/main.js` will be the entrypoint of the ClojureScript compiled part of
   the app.
 - `build.boot` is the Boot file containing build tasks. The `dev` task starts a
-  development environment with reloading and a REPL. It also edits the
-  `target/main.js` file output by the ClojureScript compiler to be loadable (the
-  normal output relies on the browser DOM).
+  development environment with reloading and a REPL.
   
 ## Running in development mode
 
