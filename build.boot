@@ -17,10 +17,10 @@
 (deftask dev
   "Start development environment"
   []
-  (comp
-   (watch)
-   (reload :port 8079
-           :ws-host "localhost")
-   (cljs-repl)
-   (cljs)
-   (target :dir #{"target"})))
+  (let [hostname (.getHostName (java.net.InetAddress/getLocalHost))]
+    (comp
+     (watch)
+     (reload :ip "0.0.0.0" :ws-host hostname)
+     (cljs-repl :ip "0.0.0.0" :ws-host hostname)
+     (cljs)
+     (target :dir #{"target"}))))
