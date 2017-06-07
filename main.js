@@ -1,15 +1,9 @@
 import Expo from 'expo';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
 
 // Runtime string -> module map for `(js/require ...)`
 
-const moduleMap = {
-  'expo': require('expo'),
-  'react': require('react'),
-  'react-native': require('react-native'),
-};
+const moduleMap = require('./target/moduleMap.js');
 const oldRequire = require;
 global.require = (m) => moduleMap[m] || oldRequire(m);
 
@@ -75,27 +69,26 @@ const initCLJSDevAsync = async () => {
 
 // Displays component set by `(js/setCLJSRootElement ...)`
 
+global.setCLJSRootElement = (cljsRoot) =>
+  global.cljsRootElement = cljsRoot;
+
 class App extends React.Component {
   state = {
     cljsRoot: null,
   }
 
   componentDidMount() {
-    global.setCLJSRootElement = (cljsRoot) =>
-      this.setState({ cljsRoot });
-    initCLJSDevAsync();
+    require('./target/config.json').dev ? initCLJSDevAsync() : require('./target/main.js');
+    let self = this;
+    function checkRoot() {
+      let cljsRoot = global.cljsRootElement;
+      cljsRoot ? self.setState({cljsRoot}) : setTimeout(checkRoot, 10);
+    }
+    checkRoot();
   }
 
   render() {
-    return this.state.cljsRoot || (
-      <View style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        <Text>waiting for cljs root element...</Text>
-      </View>
-    );
+    return this.state.cljsRoot || React.createElement(Expo.AppLoading);
   }
 }
 
